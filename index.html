@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roblox Developer Portfolio</title>
+    <title>ok_tylr's portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     
     <style>
@@ -272,6 +272,7 @@
             overflow: hidden;
         }
 
+        /* Ensures standard images scale correctly */
         .carousel-media {
             max-width: 100%;
             max-height: 100%;
@@ -282,10 +283,24 @@
             pointer-events: none;
         }
 
+        /* Forces YouTube Iframes to stretch perfectly to the container */
+        iframe.carousel-media {
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border: none;
+        }
+
         .carousel-media.active {
             opacity: 1;
             pointer-events: auto;
             position: relative;
+        }
+        
+        /* Edge case: Iframes must remain absolute even when active so they stretch */
+        iframe.carousel-media.active {
+            position: absolute;
         }
 
         .carousel-btn {
@@ -494,7 +509,7 @@
         });
 
         // ==========================================
-        // PROJECT DATA (EDIT THIS SECTION!)
+        // PROJECT DATA 
         // ==========================================
         const projectsData = {
             
@@ -548,7 +563,7 @@
         // ==========================================
 
 
-        // --- MODAL LOGIC (DO NOT EDIT BELOW THIS LINE) ---
+        // --- MODAL LOGIC ---
         let currentMediaIndex = 0;
         let currentMediaArray = [];
 
@@ -573,16 +588,12 @@
                 
                 if (item.type === 'youtube') {
                     mediaEl = document.createElement('iframe');
-                    mediaEl.src = item.src;
-                    mediaEl.style.width = '100%';
-                    mediaEl.style.height = '100%';
-                    mediaEl.style.border = 'none';
+                    // We DO NOT set the src here anymore. updateCarouselUI() will handle it!
                     mediaEl.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
                     mediaEl.allowFullscreen = true;
                 } else if (item.type === 'video') {
                     mediaEl = document.createElement('video');
                     mediaEl.src = item.src;
-                    mediaEl.autoplay = true;
                     mediaEl.loop = true;
                     mediaEl.muted = true;
                     mediaEl.playsInline = true;
@@ -591,13 +602,13 @@
                     mediaEl.src = item.src;
                 }
                 
-                mediaEl.className = `carousel-media ${index === 0 ? 'active' : ''}`;
+                mediaEl.className = `carousel-media`;
                 mediaEl.id = `media-${index}`;
                 mediaContainer.appendChild(mediaEl);
 
                 if(data.media.length > 1) {
                     let dotEl = document.createElement('div');
-                    dotEl.className = `indicator ${index === 0 ? 'active' : ''}`;
+                    dotEl.className = `indicator`;
                     dotEl.onclick = () => jumpToMedia(index);
                     indicatorsContainer.appendChild(dotEl);
                 }
@@ -608,6 +619,9 @@
 
             document.getElementById('projectModal').classList.add('active');
             document.body.style.overflow = 'hidden'; 
+            
+            // Trigger the first video to load and play
+            updateCarouselUI();
         }
 
         function closeModal() {
@@ -616,11 +630,10 @@
             setTimeout(() => {
                 document.body.style.overflow = 'auto'; 
                 
+                // Completely unload all iframes so they stop playing audio
                 const iframes = document.getElementById('mediaContainer').getElementsByTagName('iframe');
                 for(let iframe of iframes) {
-                    const currentSrc = iframe.src;
-                    iframe.src = '';
-                    iframe.src = currentSrc;
+                    iframe.src = ''; 
                 }
             }, 200); 
         }
@@ -630,13 +643,24 @@
             allMedia.forEach((el, index) => {
                 if(index === currentMediaIndex) {
                     el.classList.add('active');
+                    
+                    // Automatically play the active video
+                    if (el.tagName === 'IFRAME') {
+                        let baseSrc = currentMediaArray[index].src;
+                        // Append autoplay parameter
+                        el.src = baseSrc + "?autoplay=1";
+                    } else if (el.tagName === 'VIDEO') {
+                        el.play();
+                    }
+                    
                 } else {
                     el.classList.remove('active');
                     
+                    // Delete the src of inactive videos to save bandwidth and stop audio
                     if (el.tagName === 'IFRAME') {
-                        const currentSrc = el.src;
                         el.src = '';
-                        el.src = currentSrc;
+                    } else if (el.tagName === 'VIDEO') {
+                        el.pause();
                     }
                 }
             });
