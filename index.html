@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox Developer Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #050505;
+            --container-bg: #111111;
+            --card-bg: #1a1a1a;
+            --border-color: #2a2a2a;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #60a5fa;
+            --modal-bg: rgba(5, 5, 5, 0.95);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            
+            /* Clean, static gradient background */
+            background: radial-gradient(circle at 50% 0%, #1e293b 0%, #050505 60%);
+            background-attachment: fixed;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            gap: 35px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        nav a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            transition: color 0.2s ease;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--accent);
+            transition: width 0.2s ease;
+        }
+
+        nav a:hover { color: var(--accent); }
+        nav a:hover::after { width: 100%; }
+
+        /* Hero Section */
+        header {
+            padding: 200px 20px 120px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--accent);
+            font-size: 1.25rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+        }
+
+        section {
+            margin-bottom: 80px;
+            padding-top: 80px; 
+        }
+
+        .content-box {
+            background-color: var(--container-bg);
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .content-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            color: #ffffff;
+            margin-bottom: 30px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        h2 span { color: var(--accent); }
+
+        /* Project Cards */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .projects-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .project-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, border-color 0.2s ease-out;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px); 
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+            border-color: var(--accent);
+        }
+
+        .project-thumb {
+            width: 100%;
+            height: 200px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            object-fit: cover;
+            background-color: #0a0a0a;
+            border: 1px solid var(--border-color);
+        }
+
+        .project-card h3 {
+            color: #ffffff;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .project-card .role {
+            color: var(--accent);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+        }
+
+        .project-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Modal & Carousel */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--modal-bg);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--container-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(15px); 
+            opacity: 0;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover { background: rgba(255,255,255,0.2); }
+
+        .carousel {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            background: #000;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .carousel-media {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            position: absolute;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .carousel-media.active {
+            opacity: 1;
+            pointer-events: auto;
+            position: relative;
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        .carousel-btn:hover { background: rgba(0,0,0,0.9); }
+        .carousel-btn.prev { left: 15px; }
+        .carousel-btn.next { right: 15px; }
+
+        .carousel-indicators {
+            position: absolute;
+            bottom: 15px;
+            display: flex;
+            gap: 8px;
+            z-index: 5;
+        }
+
+        .indicator {
+            width: 10px; height: 10px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .indicator.active { background: var(--accent); }
+
+        .modal-body { padding: 30px; }
+        .modal-title { font-size: 2rem; margin-bottom: 5px; color: white; }
+        .modal-role { color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; margin-bottom: 20px; }
+        .modal-desc { color: var(--text-muted); line-height: 1.8; margin-bottom: 20px; }
+
+        /* Typography & Utilities */
+        ul { color: var(--text-muted); padding-left: 20px; margin-top: 15px; }
+        li { margin-bottom: 10px; }
+        li strong { color: var(--text-main); }
+        a.text-link { color: var(--accent); text-decoration: none; }
+        a.text-link:hover { text-decoration: underline; }
+
+        /* Snappier fade ins */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+    <header id="home">
+        <h1 class="fade-in">OK_TYLR</h1>
+        <p class="fade-in">Luau Scripter, UI/UX Designer, Web-App Developer</p>
+    </header>
+
+    <div class="container">
+        
+        <section id="about" class="fade-in">
+            <div class="content-box">
+                <h2>About <span>Me</span></h2>
+                <p>Hi, I'm Tyler! I am a passionate Roblox developer specializing in writing optimized Luau code and building complex front-end and back-end systems. With over 6 years of experience, I am more than capable of tackling any technical challenge. My primary goal is to turn your ideas into a reality.</p>
+                
+                <p style="margin-top: 15px;">I recently joined the development team for the notable content creator, <strong>RoDev</strong>, and you can currently catch some of my segments featured on his channel!</p>
+                
+                <p style="margin-top: 15px;">Outside of Roblox, I work full-time as a SaaS Web-App Developer for a private company, while also operating as a DTP (Desktop Publishing) operator and design agent.</p>
+                
+                <h3 style="margin-top: 30px; color: white;">Skills & Tools</h3>
+                <ul>
+                    <li><strong>Engine:</strong> Roblox Studio, Unity</li>
+                    <li><strong>Programming:</strong> Luau, HTML, C#, TypeScript, JavaScript</li>
+                    <li><strong>Design:</strong> Figma, InDesign, Photopea, Illustrator</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="projects">
+            <h2 class="fade-in" style="padding-left: 10px;">Featured <span>Works</span></h2>
+            
+            <div class="projects-grid">
+                
+                <div class="project-card fade-in" onclick="openModal('project1')">
+                    <img src="https://img.youtube.com/vi/rVrghG1JWdY/maxresdefault.jpg" alt="Mivarian Mirage Thumbnail" class="project-thumb">
+                    <h3>Mivarian Mirage</h3>
+                    <div class="role">Lead Scripter & UI Designer</div>
+                    <p>A passion project intended to capture the essence of classic creature-capture games using advanced spatial querying and self-made modular OOP systems.</p>
+                </div>
+
+                <div class="project-card fade-in" onclick="openModal('project2')">
+                    <img src="https://img.youtube.com/vi/RETWzoieV8Q/maxresdefault.jpg" alt="Parallax Menu Thumbnail" class="project-thumb">
+                    <h3>Parallax Menu System</h3>
+                    <div class="role">Solo Scripter</div>
+                    <p>A quick showcase of a menu made using a parallax effect to add dynamics and depth to the user interface.</p>
+                </div>
+
+                <div class="project-card fade-in" onclick="openModal('project3')">
+                    <img src="https://img.youtube.com/vi/h4U0_q1Cf6k/maxresdefault.jpg" alt="Fantasy RTS Thumbnail" class="project-thumb">
+                    <h3>Fantasy RTS</h3>
+                    <div class="role">Lead Scripter & Project Manager</div>
+                    <p>An in-depth RTS game utilizing octrees to smoothly handle hundreds of troops concurrently with minimal performance drops.</p>
+                </div>
+
+                <div class="project-card fade-in" onclick="openModal('project4')">
+                    <img src="https://img.youtube.com/vi/5Cht0CCmc7Q/maxresdefault.jpg" alt="Explosion Debris Thumbnail" class="project-thumb">
+                    <h3>Dynamic Explosion System</h3>
+                    <div class="role">Solo Dev</div>
+                    <p>A quick showcase of Roblox's Debris service paired dynamically with UnionAsync and NegateAsync.</p>
+                </div>
+
+                <div class="project-card fade-in" onclick="openModal('project5')">
+                    <img src="https://img.youtube.com/vi/Bvgr-ubFBpA/maxresdefault.jpg" alt="Wall Breaking Thumbnail" class="project-thumb">
+                    <h3>Seamless Wall Destruction</h3>
+                    <div class="role">Solo Dev</div>
+                    <p>A robust system using spatial queries to detect structural objects and break them apart seamlessly in real-time.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="contact" class="fade-in">
+            <div class="content-box">
+                <h2>Contact <span>Me</span></h2>
+                <p>My commissions are currently <strong style="color: #4ade80;">Open</strong>! I'd love to hear about your next big project.</p>
+                <ul>
+                    <li><strong>Discord:</strong> @ok_tylr</li>
+                    <li><strong>ROBLOX:</strong> @isthisnotused2</li>
+                    <li><strong>Group:</strong> OK Works</li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        &copy; 2026 OK_TYLR. Making your dreams a reality — one script at a time.
+    </footer>
+
+    <div class="modal" id="projectModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">✕</button>
+            
+            <div class="carousel" id="carouselContainer">
+                <button class="carousel-btn prev" onclick="changeMedia(-1)">❮</button>
+                <div id="mediaContainer"></div>
+                <button class="carousel-btn next" onclick="changeMedia(1)">❯</button>
+                
+                <div class="carousel-indicators" id="carouselIndicators"></div>
+            </div>
+
+            <div class="modal-body">
+                <h2 class="modal-title" id="modalTitle">Project Title</h2>
+                <div class="modal-role" id="modalRole">Role</div>
+                <div class="modal-desc" id="modalDesc">Project description goes here...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- SCROLL ANIMATIONS ---
+        document.addEventListener("DOMContentLoaded", function() {
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        });
+
+        // ==========================================
+        // PROJECT DATA (EDIT THIS SECTION!)
+        // ==========================================
+        const projectsData = {
+            
+            project1: {
+                title: "Mivarian Mirage",
+                role: "Lead Scripter & UI Designer",
+                description: `A passion project that's been suspended. The game was intended to capture the same essence of the original "Roblox Pokemon Games", while still remaining original and not breaking ToS through our own uniquely designed "Fakemon". The game's system uses advanced spatial querying for trainer and grass detection, alongside strict typechecking. The entire game is made up of self-made modular OOP systems. Advanced datastore API (profile store) was used to ensure security and accuracy when treating data. The game is by far one of my most ambitious projects yet.`,
+                media: [
+                    { type: 'youtube', src: 'https://www.youtube.com/embed/rVrghG1JWdY' },
+                    { type: 'youtube', src: 'https://www.youtube.com/embed/rR-Tuw4OTbc' }
+                ]
+            },
+
+            project2: {
+                title: "Parallax Menu System",
+                role: "Solo Scripter",
+                description: `A quick showcase of a menu made using a parallax effect to add dynamics and depth to the user interface.`,
+                media: [
+                    { type: 'youtube', src: 'https://www.youtube.com/embed/RETWzoieV8Q' }
+                ]
+            },
+
+            project3: {
+                title: "Fantasy RTS",
+                role: "Lead Scripter & Project Manager",
+                description: `An in-depth Real-time strategy game. The game uses advanced spatial queries (octrees) to handle hundreds of troops being moved around continuously. During stress-tests, we managed to have over 400 separate entries of troops before noticing any sort of performance drop. Given the time and resources we had, the game was never completed.`,
+                media: [
+                    { type: 'youtube', src: 'https://www.youtube.com/embed/h4U0_q1Cf6k' },
+                    { type: 'youtube', src: 'https://www.youtube.com/embed/ShpE9ufRwE4' }
+                ]
+            },
+
+            project4: {
+                title: "Dynamic Explosion System",
+                role: "Solo Dev",
+                description: `A quick showcase of Roblox's Debris service paired seamlessly with UnionAsync and NegateAsync to create dynamic explosions.`,
+                media: [
+                    { type: 'youtube', src: 'https://www.youtube.com/embed/5Cht0CCmc7Q' }
+                ]
+            },
+
+            project5: {
+                title: "Seamless Wall Destruction",
+                role: "Solo Dev",
+                description: `Another showcase of Roblox's Debris service paired with UnionAsync and NegateAsync. This system uses spatial queries to detect objects and break them up seamlessly.`,
+                media: [
+                    { type: 'youtube', src: 'https://www.youtube.com/embed/Bvgr-ubFBpA' }
+                ]
+            }
+        };
+        // ==========================================
+
+
+        // --- MODAL LOGIC (DO NOT EDIT BELOW THIS LINE) ---
+        let currentMediaIndex = 0;
+        let currentMediaArray = [];
+
+        function openModal(projectId) {
+            const data = projectsData[projectId];
+            if (!data) return;
+
+            document.getElementById('modalTitle').innerText = data.title;
+            document.getElementById('modalRole').innerText = data.role;
+            document.getElementById('modalDesc').innerHTML = data.description; 
+
+            currentMediaArray = data.media;
+            currentMediaIndex = 0;
+            const mediaContainer = document.getElementById('mediaContainer');
+            const indicatorsContainer = document.getElementById('carouselIndicators');
+            
+            mediaContainer.innerHTML = '';
+            indicatorsContainer.innerHTML = '';
+
+            data.media.forEach((item, index) => {
+                let mediaEl;
+                
+                if (item.type === 'youtube') {
+                    mediaEl = document.createElement('iframe');
+                    mediaEl.src = item.src;
+                    mediaEl.style.width = '100%';
+                    mediaEl.style.height = '100%';
+                    mediaEl.style.border = 'none';
+                    mediaEl.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+                    mediaEl.allowFullscreen = true;
+                } else if (item.type === 'video') {
+                    mediaEl = document.createElement('video');
+                    mediaEl.src = item.src;
+                    mediaEl.autoplay = true;
+                    mediaEl.loop = true;
+                    mediaEl.muted = true;
+                    mediaEl.playsInline = true;
+                } else {
+                    mediaEl = document.createElement('img');
+                    mediaEl.src = item.src;
+                }
+                
+                mediaEl.className = `carousel-media ${index === 0 ? 'active' : ''}`;
+                mediaEl.id = `media-${index}`;
+                mediaContainer.appendChild(mediaEl);
+
+                if(data.media.length > 1) {
+                    let dotEl = document.createElement('div');
+                    dotEl.className = `indicator ${index === 0 ? 'active' : ''}`;
+                    dotEl.onclick = () => jumpToMedia(index);
+                    indicatorsContainer.appendChild(dotEl);
+                }
+            });
+
+            const buttons = document.querySelectorAll('.carousel-btn');
+            buttons.forEach(btn => btn.style.display = data.media.length > 1 ? 'flex' : 'none');
+
+            document.getElementById('projectModal').classList.add('active');
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        function closeModal() {
+            document.getElementById('projectModal').classList.remove('active');
+            
+            setTimeout(() => {
+                document.body.style.overflow = 'auto'; 
+                
+                const iframes = document.getElementById('mediaContainer').getElementsByTagName('iframe');
+                for(let iframe of iframes) {
+                    const currentSrc = iframe.src;
+                    iframe.src = '';
+                    iframe.src = currentSrc;
+                }
+            }, 200); 
+        }
+
+        function updateCarouselUI() {
+            const allMedia = document.querySelectorAll('.carousel-media');
+            allMedia.forEach((el, index) => {
+                if(index === currentMediaIndex) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                    
+                    if (el.tagName === 'IFRAME') {
+                        const currentSrc = el.src;
+                        el.src = '';
+                        el.src = currentSrc;
+                    }
+                }
+            });
+
+            const allDots = document.querySelectorAll('.indicator');
+            allDots.forEach((el, index) => {
+                el.classList.toggle('active', index === currentMediaIndex);
+            });
+        }
+
+        function changeMedia(direction) {
+            currentMediaIndex += direction;
+            if (currentMediaIndex < 0) currentMediaIndex = currentMediaArray.length - 1;
+            else if (currentMediaIndex >= currentMediaArray.length) currentMediaIndex = 0;
+            updateCarouselUI();
+        }
+
+        function jumpToMedia(index) {
+            currentMediaIndex = index;
+            updateCarouselUI();
+        }
+
+        document.getElementById('projectModal').addEventListener('click', function(e) {
+            if (e.target === this) { closeModal(); }
+        });
+        
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape" && document.getElementById('projectModal').classList.contains('active')) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
